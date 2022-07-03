@@ -13,6 +13,7 @@ from tez.logger import logger
 from tez.utils import AverageMeter
 
 from .config import TezConfig
+from .awp import AWP
 
 
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -180,6 +181,15 @@ class Tez:
         if self.optimizer is None:
             raise Exception("No optimizer found")
 
+        if self.config.adv_lr > 0:
+            self.config.adv_after_step = int(self.config.adv_after_epoch * len(self.train_dataset) / self.config.training_batch_size)
+            self.awp = AWP(self.model,
+                           self.optimizer,
+                           adv_lr=self.config.adv_lr,
+                           adv_eps=self.config.adv_eps,
+                           scaler=self.scaler,
+                           device=self.config.device)
+
         if self.local_rank != -1:
             if torch.distributed.get_rank() == 0:
                 logger.info(f"\n{self.config}")
@@ -313,6 +323,11 @@ class Tez:
         else:
             loss.backward()
 
+    def _attack(self, data):
+        if (self.config.adv_lr == 0) or (self.current_train_step < self.config.adv_after_step):
+            return
+        self.awp.attack_backward(data)
+
     def _clip_grad_norm(self):
         if self.config.clip_grad_norm != -1:
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.config.clip_grad_norm)
@@ -341,6 +356,7 @@ class Tez:
         self._zero_grad()
         _, loss, metrics = self.model_fn(data)
         self._backward(loss, metrics)
+        self._attack(data)
         self._clip_grad_norm()
         self._step()
         return loss, metrics

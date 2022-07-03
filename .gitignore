@@ -1,4 +1,6 @@
 # local stuff
+.DS_Store
+.idea
 .vscode/
 examples/.logs/
 examples/text_classification/.logs/

@@ -1,5 +1,5 @@
 from .callbacks import Callback
-from .model import Tez, TezConfig
+from .model import Tez, TezConfig, AWP
 from .model.model import Model
 
 

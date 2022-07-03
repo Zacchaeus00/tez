@@ -35,3 +35,7 @@ class TezConfig:
     # TODO: validation parameters
     val_strategy: Optional[str] = "epoch"  # epoch or batch
     val_steps: Optional[int] = 100  # not used if val_strategy is "epoch"
+
+    adv_lr: Optional[float] = 0
+    adv_eps: Optional[float] = 0.01
+    adv_after_epoch: Optional[float] = 0
