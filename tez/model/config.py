@@ -15,13 +15,13 @@ class TezConfig:
     # training parameters
     epochs: Optional[int] = 20
     gradient_accumulation_steps: Optional[int] = 1
-    clip_grad_norm: Optional[float] = -1
+    clip_grad_norm: Optional[float] = 10
     num_jobs: Optional[int] = -1
-    fp16: Optional[bool] = False
+    fp16: Optional[bool] = True
 
     # data loader parameters
     train_shuffle: Optional[bool] = True
-    valid_shuffle: Optional[bool] = True
+    valid_shuffle: Optional[bool] = False
     train_drop_last: Optional[bool] = False
     valid_drop_last: Optional[bool] = False
     test_drop_last: Optional[bool] = False
@@ -29,12 +29,12 @@ class TezConfig:
     pin_memory: Optional[bool] = True
 
     # scheduler parameters
-    step_scheduler_after: Optional[str] = "epoch"  # "epoch" or "batch"
+    step_scheduler_after: Optional[str] = "batch"  # "epoch" or "batch"
     step_scheduler_metric: Optional[str] = None
 
     # TODO: validation parameters
-    val_strategy: Optional[str] = "epoch"  # epoch or batch
-    val_steps: Optional[int] = 100  # not used if val_strategy is "epoch"
+    val_strategy: Optional[str] = "batch"  # epoch or batch
+    val_steps: Optional[int] = 500  # not used if val_strategy is "epoch"
 
     adv_lr: Optional[float] = 0
     adv_eps: Optional[float] = 0.01
