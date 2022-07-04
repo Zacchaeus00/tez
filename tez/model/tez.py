@@ -181,7 +181,7 @@ class Tez:
         if self.optimizer is None:
             raise Exception("No optimizer found")
 
-        self.attact_started = False
+        self.attack_started = False
         if self.config.adv_lr > 0:
             self.config.adv_after_step = int(self.config.adv_after_epoch * len(self.train_dataset) / self.config.training_batch_size)
             self.awp = AWP(self.model,
@@ -328,9 +328,9 @@ class Tez:
     def _attack(self, data):
         if (self.config.adv_lr == 0) or (self.current_train_step < self.config.adv_after_step):
             return
-        if not self.attact_started:
+        if not self.attack_started:
             logger.info("\nAttack starts!")
-            self.attact_started = True
+            self.attack_started = True
         self.awp.attack_backward(data)
 
     def _clip_grad_norm(self):
